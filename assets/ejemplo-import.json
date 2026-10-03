@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "exportedAt": "2026-09-14T12:00:00.000Z",
+  "days": {
+    "2026-09-13": {
+      "date": "2026-09-13",
+      "entries": [
+        {
+          "id": "ex1-abc",
+          "foodId": "fatsecret-12300",
+          "name": "Manzana Roja",
+          "brand": "",
+          "category": "Generic",
+          "quantity": 1.5,
+          "unit": "porción",
+          "servingSize": 100,
+          "servingUnit": "g",
+          "consumedAt": "09:30",
+          "nutrientsPerServing": { "calories": 52, "protein": 0.3, "carbohydrates": 14, "fat": 0.2, "fiber": 2.4, "sugar": 10, "sodium": 1 },
+          "nutrientsTotal": { "calories": 78, "protein": 0.45, "carbohydrates": 21, "fat": 0.3, "fiber": 3.6, "sugar": 15, "sodium": 1.5 }
+        },
+        {
+          "id": "ex2-def",
+          "foodId": "fatsecret-45600",
+          "name": "Arroz Blanco Cocido",
+          "brand": "Marca Ejemplo",
+          "category": "Generic",
+          "quantity": 2,
+          "unit": "taza",
+          "servingSize": 100,
+          "servingUnit": "g",
+          "consumedAt": "13:15",
+          "nutrientsPerServing": { "calories": 130, "protein": 2.4, "carbohydrates": 28, "fat": 0.3, "fiber": 0.4, "sugar": 0.1, "sodium": 1 },
+          "nutrientsTotal": { "calories": 260, "protein": 4.8, "carbohydrates": 56, "fat": 0.6, "fiber": 0.8, "sugar": 0.2, "sodium": 2 }
+        }
+      ]
+    },
+    "2026-09-14": {
+      "date": "2026-09-14",
+      "entries": [
+        {
+          "id": "ex3-ghi",
+          "foodId": "fatsecret-78900",
+          "name": "Pechuga De Pollo",
+          "brand": "",
+          "category": "Generic",
+          "quantity": 1,
+          "unit": "porción",
+          "servingSize": 100,
+          "servingUnit": "g",
+          "consumedAt": "12:00",
+          "nutrientsPerServing": { "calories": 165, "protein": 31, "carbohydrates": 0, "fat": 3.6, "fiber": 0, "sugar": 0, "sodium": 74 },
+          "nutrientsTotal": { "calories": 165, "protein": 31, "carbohydrates": 0, "fat": 3.6, "fiber": 0, "sugar": 0, "sodium": 74 }
+        }
+      ]
+    }
+  },
+  "settings": { "unitSystem": "metric", "theme": "light" }
+}

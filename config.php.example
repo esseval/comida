@@ -1,0 +1,10 @@
+<?php
+// config.php.example — copia a config.php y completa con tus credenciales
+// https://platform.fatsecret.com → tu app → API Keys
+return [
+  'client_id' => 'TU_CLIENT_ID_AQUI',
+  'client_secret' => 'TU_CLIENT_SECRET_AQUI',
+  // scope: 'basic' (compatible con apps free, recomendado) o 'premier' si tu app tiene acceso premier
+  // Si ves error code 14 Missing scope 'premier', tu app es basic-only: usa 'basic' (el proxy reintentará sin flags premier automáticamente)
+  'scope' => 'basic',
+];

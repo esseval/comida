@@ -1,0 +1,24 @@
+/* responsive.css */
+@media (max-width: 900px){
+  .summary-grid{grid-template-columns:repeat(2,1fr)}
+  .preview-nutrients{grid-template-columns:repeat(2,1fr)}
+  .form-row{grid-template-columns:1fr}
+}
+@media (max-width: 640px){
+  .header-inner{padding:12px 14px}
+  .container{padding:0 14px 30px; gap:14px}
+  .card{padding:14px}
+  .brand-title{font-size:1.1rem}
+  .search-bar{flex-direction:column}
+  .date-nav{flex-direction:column; align-items:stretch}
+  .date-center{justify-content:space-between}
+  .date-label{min-width:auto; flex:1; text-align:left}
+  .summary-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width: 380px){
+  .summary-grid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion: reduce){
+  *{scroll-behavior:auto !important; transition:none !important; animation:none !important}
+  #bg-canvas{display:none}
+}

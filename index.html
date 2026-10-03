@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Diario nutricional - Registra tus alimentos diarios sin cuenta, todo local en tu navegador.">
+  <title>NutriDiario — Registro diario de alimentos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <!-- Three.js ES module via importmap (opcional, app funciona sin él) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- Canvas Three.js fondo (decorativo) -->
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+  <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+  <header class="app-header" role="banner">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">🥗</div>
+        <div>
+          <h1 class="brand-title">NutriDiario</h1>
+          <p class="brand-subtitle">Tu registro diario, privado y local</p>
+        </div>
+      </div>
+      <nav class="header-actions" aria-label="Acciones principales">
+        <button id="btn-theme" class="btn btn-ghost" aria-label="Cambiar tema claro/oscuro" title="Cambiar tema">
+          <span id="theme-icon">🌙</span>
+        </button>
+        <button id="btn-data" class="btn btn-ghost" aria-label="Gestionar datos">Datos</button>
+      </nav>
+    </div>
+    <div class="local-notice" role="note">
+      <span aria-hidden="true">🔒</span> Tus datos se guardan <strong>solo en este navegador</strong> (localStorage). No se envían a ningún servidor. No necesitas cuenta.
+    </div>
+  </header>
+
+  <main id="main-content" class="container">
+    <!-- Navegación de fecha -->
+    <section class="date-nav card" aria-label="Navegación de fecha">
+      <button id="btn-prev-day" class="btn btn-ghost" aria-label="Día anterior">‹ Anterior</button>
+      <div class="date-center">
+        <label for="date-picker" class="sr-only">Seleccionar fecha</label>
+        <input type="date" id="date-picker" class="date-input">
+        <p id="date-label" class="date-label" aria-live="polite"></p>
+        <button id="btn-today" class="btn btn-small">Hoy</button>
+      </div>
+      <button id="btn-next-day" class="btn btn-ghost" aria-label="Día siguiente">Siguiente ›</button>
+    </section>
+
+    <!-- Resumen nutricional -->
+    <section class="summary card" aria-labelledby="summary-title">
+      <h2 id="summary-title" class="section-title">Resumen del día</h2>
+      <div id="summary-grid" class="summary-grid">
+        <!-- se llena por JS -->
+      </div>
+      <div class="summary-extra">
+        <div class="progress-wrap" aria-hidden="true">
+          <div class="progress-label"><span>Calorías</span><span id="summary-calories-text">0 kcal</span></div>
+          <div class="progress-bar"><div id="progress-calories" class="progress-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Buscador -->
+    <section class="search-section card" aria-labelledby="search-title">
+      <h2 id="search-title" class="section-title">Agregar alimento</h2>
+
+      <div class="search-bar">
+        <label for="search-input" class="sr-only">Buscar alimento</label>
+        <input type="search" id="search-input" placeholder="Ej: manzana, arroz, pollo..." autocomplete="off" aria-describedby="search-hint">
+        <button id="btn-search" class="btn btn-primary">Buscar</button>
+      </div>
+
+      <div id="search-status" class="search-status" role="status" aria-live="polite"></div>
+      <ul id="search-results" class="search-results" role="listbox" aria-label="Resultados de búsqueda"></ul>
+      <div id="search-pagination" class="pagination" hidden>
+        <button id="btn-more" class="btn btn-ghost">Cargar más</button>
+      </div>
+    </section>
+
+    <!-- Panel de alimento seleccionado -->
+    <section id="selected-food-panel" class="card selected-panel" hidden aria-labelledby="selected-title">
+      <h3 id="selected-title" class="section-title">Alimento seleccionado</h3>
+      <div id="selected-info" class="selected-info"></div>
+      <form id="add-form" class="add-form" novalidate>
+        <div class="form-row">
+          <div class="field">
+            <label for="input-quantity">Cantidad <span aria-hidden="true">*</span></label>
+            <input type="number" id="input-quantity" min="0.1" step="0.1" value="1" required inputmode="decimal">
+          </div>
+          <div class="field">
+            <label for="input-unit">Unidad</label>
+            <input type="text" id="input-unit" value="porción" placeholder="porción, g, taza...">
+          </div>
+          <div class="field">
+            <label for="input-time">Hora</label>
+            <input type="time" id="input-time">
+          </div>
+        </div>
+        <div id="preview-nutrients" class="preview-nutrients"></div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Agregar al día</button>
+          <button type="button" id="btn-cancel-selection" class="btn btn-ghost">Cancelar</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Lista del día -->
+    <section class="entries-section card" aria-labelledby="entries-title">
+      <div class="entries-header">
+        <h2 id="entries-title" class="section-title">Alimentos del día</h2>
+        <div class="entries-actions">
+          <button id="btn-clear-day" class="btn btn-danger btn-small">Vaciar día</button>
+          <button id="btn-duplicate" class="btn btn-ghost btn-small">Duplicar a otra fecha</button>
+        </div>
+      </div>
+      <ul id="entries-list" class="entries-list"></ul>
+      <div id="empty-state" class="empty-state">
+        <div class="empty-icon" aria-hidden="true">🍽️</div>
+        <h3>Sin registros aún</h3>
+        <p>Busca un alimento arriba, selecciona la cantidad y agrégalo. Tu día empieza aquí.</p>
+      </div>
+    </section>
+
+    <!-- Historial -->
+    <section class="history-section card" aria-labelledby="history-title">
+      <h2 id="history-title" class="section-title">Historial</h2>
+      <p class="hint">Fechas con registros. Haz clic para ir a ese día.</p>
+      <ul id="history-list" class="history-list"></ul>
+      <div id="history-empty" class="hint" hidden>Sin historial todavía. Agrega tu primer alimento.</div>
+    </section>
+  </main>
+
+  <!-- Modal de datos (export/import) -->
+  <dialog id="data-dialog" class="dialog" aria-labelledby="data-dialog-title">
+    <form method="dialog" class="dialog-inner">
+      <h3 id="data-dialog-title">Gestión de datos</h3>
+      <p class="hint">Exporta, importa o borra tus datos locales. Todo queda en tu navegador.</p>
+
+      <div class="dialog-block">
+        <h4>Exportar</h4>
+        <div class="btn-row">
+          <button type="button" id="btn-export-json" class="btn btn-secondary">Exportar JSON</button>
+          <button type="button" id="btn-export-csv" class="btn btn-secondary">Exportar CSV</button>
+        </div>
+      </div>
+
+      <div class="dialog-block">
+        <h4>Importar JSON</h4>
+        <label for="import-file" class="sr-only">Seleccionar archivo JSON</label>
+        <input type="file" id="import-file" accept=".json,application/json">
+        <fieldset class="radio-group">
+          <legend>Modo de importación</legend>
+          <label><input type="radio" name="import-mode" value="merge" checked> Combinar (evita duplicados)</label>
+          <label><input type="radio" name="import-mode" value="replace"> Reemplazar todo</label>
+        </fieldset>
+        <button type="button" id="btn-import" class="btn btn-primary">Importar</button>
+        <div id="import-result" class="import-result" role="status" aria-live="polite"></div>
+      </div>
+
+      <div class="dialog-block danger-zone">
+        <h4>Zona de peligro</h4>
+        <button type="button" id="btn-wipe-all" class="btn btn-danger">Borrar todos los datos</button>
+      </div>
+
+      <div class="dialog-actions">
+        <button type="submit" class="btn btn-ghost">Cerrar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Modal duplicar -->
+  <dialog id="duplicate-dialog" class="dialog" aria-labelledby="dup-title">
+    <form method="dialog" class="dialog-inner" id="duplicate-form">
+      <h3 id="dup-title">Duplicar registros</h3>
+      <p>Copiar los <span id="dup-count">0</span> registros de <strong id="dup-source"></strong> a:</p>
+      <label for="dup-date">Fecha destino</label>
+      <input type="date" id="dup-date" required>
+      <div class="dialog-actions">
+        <button type="button" id="btn-dup-cancel" class="btn btn-ghost">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Duplicar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <!-- Scripts -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
